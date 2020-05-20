@@ -1,3 +1,4 @@
+//event handler that keeps track of contant downloads
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
   // function summNumbers(a, b) {
@@ -32,7 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const burgerBtn = document.getElementById('burger');
   const nextButton = document.querySelector('#next');
   const prevButton = document.querySelector('#prev');
+  const sendButton = document.querySelector('#send');
   const modalDialog = document.querySelector('.modal-dialog');
+  const modalTitle = document.querySelector('.modal-title');
+
+  //question and answer object
   const questions = [
     {
       question: 'Какого цвета бургер?',
@@ -111,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let clientWidth = document.documentElement.clientWidth;
   let count = -100;
 
+  //modal window display condition
   if (clientWidth < 768) {
     burgerBtn.style.display = 'flex';
   } else {
@@ -118,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   modalDialog.style.top = count + '%';
 
+  //pop-up animation of modal window
   const animateModal = () => {
     modalDialog.style.top = count + '%';
     count += 3;
@@ -129,17 +136,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
-  window.addEventListener('resize', function () {
-    clientWidth = document.documentElement.clientWidth;
-    if (clientWidth < 768) {
-      burgerBtn.style.display = 'flex';
-    } else {
-      burgerBtn.style.display = 'none';
-    }
-  });
-
+  //test start function
   const playTest = () => {
+    const finalAnswers = [];
+    const obj = {};
+    //question number variable
     let numberQuestion = 0;
+    modalTitle.classList.remove('d-none');
+    //rendering answers function
     const renderAnswers = (index) => {
       questions[index].answers.forEach((answer) => {
         const answerItem = document.createElement('div');
@@ -149,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
           'justify-content-center'
         );
         answerItem.innerHTML = `
-          <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none">
+          <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none" value="${answer.title}">
           <label for="${answer.title}" class="d-flex flex-column justify-content-between">
             <img class="answerImg" src="${answer.url}" alt="burger">
             <span>${answer.title}</span>
@@ -159,37 +163,94 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     };
 
+    //rendering questions function + launch rendering answers function
     const renderQuestions = (indexQuestion) => {
       formAnswers.innerHTML = '';
-      questionTitle.textContent = `${questions[indexQuestion].question}`;
-      renderAnswers(indexQuestion);
+      if (numberQuestion >= 0 && numberQuestion <= questions.length - 1) {
+        questionTitle.textContent = `${questions[indexQuestion].question}`;
+        renderAnswers(indexQuestion);
+        prevButton.style.visibility = 'visible';
+        nextButton.style.visibility = 'visible';
+        nextButton.disabled = true;
+        sendButton.classList.add('d-none');
+      }
     };
 
     renderQuestions(numberQuestion);
 
-    const checkNumber = () => {
-      if (numberQuestion === 0) {
-        prevButton.style.visibility = 'hidden';
-      } else {
-        prevButton.style.visibility = 'visible';
-      }
+    const checkAnswer = () => {
+      const inputs = [...formAnswers.elements].filter(
+        (input) => input.checked || input.id === 'numberPhone'
+      );
+      inputs.forEach((input, index) => {
+        if (numberQuestion >= 0 && numberQuestion <= questions.length - 1) {
+          obj[`${index}_${questions[numberQuestion].question}`] = input.value;
+        }
+        if (numberQuestion === questions.length) {
+          obj['Номер телефона'] = input.value;
+        }
+      });
+      // finalAnswers.push(obj);
+    };
 
-      if (numberQuestion === questions.length - 1) {
-        nextButton.style.visibility = 'hidden';
-      } else {
-        nextButton.style.visibility = 'visible';
+    const checkNumber = () => {
+      switch (numberQuestion) {
+        case 0:
+          prevButton.style.visibility = 'hidden';
+          break;
+        case questions.length:
+          nextButton.style.visibility = 'hidden';
+          prevButton.style.visibility = 'hidden';
+          sendButton.classList.remove('d-none');
+          questionTitle.textContent = '';
+          modalTitle.classList.add('d-none');
+          formAnswers.innerHTML = `
+          <div class="form-group">
+            <label for="numberPhone">Введите свой номер телефона</label>
+            <input type="phone" class="form-control" id="numberPhone">
+          </div>
+          `;
+
+          const numberPhone = document.getElementById('numberPhone');
+          numberPhone.addEventListener('input', (event) => {
+            event.target.value = event.target.value.replace(/[^0-9+-]/, '');
+          });
+          break;
+        case questions.length + 1:
+          formAnswers.textContent = 'Спасибо за пройденный тест!';
+          sendButton.classList.add('d-none');
+
+          for (let key in obj) {
+            let newObj = {};
+            newObj[key] = obj[key];
+            finalAnswers.push(newObj);
+          }
+
+          setTimeout(() => {
+            modalBlock.classList.remove('d-block');
+          }, 2000);
+          break;
       }
     };
 
     checkNumber();
 
+    //event handlers for the next and prev buttons
     nextButton.onclick = () => {
+      checkAnswer();
       numberQuestion++;
       renderQuestions(numberQuestion);
       checkNumber();
     };
     prevButton.onclick = () => {
       numberQuestion--;
+      renderQuestions(numberQuestion);
+      checkNumber();
+    };
+
+    sendButton.onclick = () => {
+      checkAnswer();
+      numberQuestion++;
       renderQuestions(numberQuestion);
       checkNumber();
     };
@@ -202,6 +263,17 @@ document.addEventListener('DOMContentLoaded', function () {
   //   console.log('firstClick');
   // };
 
+  //event handler to track changes in window width and display/hide the burger menu
+  window.addEventListener('resize', function () {
+    clientWidth = document.documentElement.clientWidth;
+    if (clientWidth < 768) {
+      burgerBtn.style.display = 'flex';
+    } else {
+      burgerBtn.style.display = 'none';
+    }
+  });
+
+  //modal window open/close event handler
   burgerBtn.addEventListener('click', () => {
     requestAnimationFrame(animateModal);
     burgerBtn.classList.add('active');
@@ -231,4 +303,11 @@ document.addEventListener('DOMContentLoaded', function () {
       burgerBtn.classList.remove('active');
     }
   });
+
+  formAnswers.addEventListener('click', function (event) {
+    if (event.target.closest('input')) {
+      nextButton.disabled = false;
+    }
+  });
 });
+///////////////////////////////////////////////////
