@@ -37,81 +37,125 @@ document.addEventListener('DOMContentLoaded', function () {
   const modalDialog = document.querySelector('.modal-dialog');
   const modalTitle = document.querySelector('.modal-title');
 
-  //question and answer object
-  const questions = [
-    {
-      question: 'Какого цвета бургер?',
-      answers: [
-        {
-          title: 'Стандарт',
-          url: './image/burger.png',
-        },
-        {
-          title: 'Черный',
-          url: './image/burgerBlack.png',
-        },
-      ],
-      type: 'radio',
-    },
-    {
-      question: 'Из какого мяса котлета?',
-      answers: [
-        {
-          title: 'Курица',
-          url: './image/chickenMeat.png',
-        },
-        {
-          title: 'Говядина',
-          url: './image/beefMeat.png',
-        },
-        {
-          title: 'Свинина',
-          url: './image/porkMeat.png',
-        },
-      ],
-      type: 'radio',
-    },
-    {
-      question: 'Дополнительные ингредиенты?',
-      answers: [
-        {
-          title: 'Помидор',
-          url: './image/tomato.png',
-        },
-        {
-          title: 'Огурец',
-          url: './image/cucumber.png',
-        },
-        {
-          title: 'Салат',
-          url: './image/salad.png',
-        },
-        {
-          title: 'Лук',
-          url: './image/onion.png',
-        },
-      ],
-      type: 'checkbox',
-    },
-    {
-      question: 'Добавить соус?',
-      answers: [
-        {
-          title: 'Чесночный',
-          url: './image/sauce1.png',
-        },
-        {
-          title: 'Томатный',
-          url: './image/sauce2.png',
-        },
-        {
-          title: 'Горчичный',
-          url: './image/sauce3.png',
-        },
-      ],
-      type: 'radio',
-    },
-  ];
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: 'AIzaSyD_tp08UarcEtMi5PlHz3T0-PQEqJgp6zs',
+    authDomain: 'quiz-burger-a6f69.firebaseapp.com',
+    databaseURL: 'https://quiz-burger-a6f69.firebaseio.com',
+    projectId: 'quiz-burger-a6f69',
+    storageBucket: 'quiz-burger-a6f69.appspot.com',
+    messagingSenderId: '309086854547',
+    appId: '1:309086854547:web:4dab76b003bc09b1165c66',
+    measurementId: 'G-PHLHKSDLVV',
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  //data capture function
+  const getData = () => {
+    // formAnswers.textContent = 'LOAD';
+    formAnswers.innerHTML = `<div class="loadingio-spinner-spinner-7r5r9y9ba0n"><div class="ldio-s13a60rexd">
+    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    </div></div>
+    <style type="text/css">
+    @keyframes ldio-s13a60rexd {
+      0% { opacity: 1 }
+      100% { opacity: 0 }
+    }
+    .ldio-s13a60rexd div {
+      left: 59.800000000000004px;
+      top: 11.05px;
+      position: absolute;
+      animation: ldio-s13a60rexd linear 1s infinite;
+      background: #262323;
+      width: 10.4px;
+      height: 29.900000000000002px;
+      border-radius: 5.2px / 12.857000000000001px;
+      transform-origin: 5.2px 53.95px;
+    }.ldio-s13a60rexd div:nth-child(1) {
+      transform: rotate(0deg);
+      animation-delay: -0.9166666666666666s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(2) {
+      transform: rotate(30deg);
+      animation-delay: -0.8333333333333334s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(3) {
+      transform: rotate(60deg);
+      animation-delay: -0.75s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(4) {
+      transform: rotate(90deg);
+      animation-delay: -0.6666666666666666s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(5) {
+      transform: rotate(120deg);
+      animation-delay: -0.5833333333333334s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(6) {
+      transform: rotate(150deg);
+      animation-delay: -0.5s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(7) {
+      transform: rotate(180deg);
+      animation-delay: -0.4166666666666667s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(8) {
+      transform: rotate(210deg);
+      animation-delay: -0.3333333333333333s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(9) {
+      transform: rotate(240deg);
+      animation-delay: -0.25s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(10) {
+      transform: rotate(270deg);
+      animation-delay: -0.16666666666666666s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(11) {
+      transform: rotate(300deg);
+      animation-delay: -0.08333333333333333s;
+      background: #262323;
+    }.ldio-s13a60rexd div:nth-child(12) {
+      transform: rotate(330deg);
+      animation-delay: 0s;
+      background: #262323;
+    }
+    .loadingio-spinner-spinner-7r5r9y9ba0n {
+      width: 130px;
+      height: 130px;
+      display: inline-block;
+      overflow: hidden;
+      background: none;
+    }
+    .ldio-s13a60rexd {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform: translateZ(0) scale(1);
+      backface-visibility: hidden;
+      transform-origin: 0 0; /* see note above */
+    }
+    .ldio-s13a60rexd div { box-sizing: content-box; }
+    /* generated by https://loading.io/ */
+    </style>`;
+
+    setTimeout(() => {
+      firebase
+        .database()
+        .ref()
+        .child('questions')
+        .once('value')
+        .then((snap) => playTest(snap.val()));
+      // fetch('./questions.json')
+      //   .then((res) => res.json())
+      //   .then((obj) => playTest(obj.questions))
+      //   .catch((err) => {
+      //     formAnswers.textContent = 'Ошибка загрузки данных!';
+      //     console.error(err);
+      //   });
+    }, 1000);
+  };
 
   let clientWidth = document.documentElement.clientWidth;
   let count = -100;
@@ -137,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   //test start function
-  const playTest = () => {
+  const playTest = (questions) => {
     const finalAnswers = [];
     const obj = {};
     //question number variable
@@ -202,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
           nextButton.style.visibility = 'hidden';
           prevButton.style.visibility = 'hidden';
           sendButton.classList.remove('d-none');
+          sendButton.disabled = true;
           questionTitle.textContent = '';
           modalTitle.classList.add('d-none');
           formAnswers.innerHTML = `
@@ -253,6 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
       numberQuestion++;
       renderQuestions(numberQuestion);
       checkNumber();
+      firebase.database().ref().child('contacts').push(finalAnswers);
     };
   };
 
@@ -278,14 +324,14 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(animateModal);
     burgerBtn.classList.add('active');
     modalBlock.classList.add('d-block');
-    playTest();
+    getData();
   });
 
   btnOpenModal.addEventListener('click', () => {
     requestAnimationFrame(animateModal);
     burgerBtn.classList.add('active');
     modalBlock.classList.add('d-block');
-    playTest();
+    getData();
   });
 
   closeModal.addEventListener('click', () => {
@@ -307,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
   formAnswers.addEventListener('click', function (event) {
     if (event.target.closest('input')) {
       nextButton.disabled = false;
+      sendButton.disabled = false;
     }
   });
 });
-///////////////////////////////////////////////////
